@@ -9,7 +9,7 @@ const aggregatorV3InterfaceABI = [{ "inputs": [], "name": "decimals", "outputs":
 
 const dataFeed = async (_totalUSD) => {
     /* 
-        1 Get Total amount in USD 
+        1. Get Total amount in USD 
         2. Allocatoin price according the percentage 
         3. Call OP_Reblance
     */
@@ -32,12 +32,29 @@ const dataFeed = async (_totalUSD) => {
 }
 
 const getBananceFromContract = async () => {
-    // Fetch all asset balance from contract
+    // Fetch all asset balance from contract (get all contract first)
     // Total Asset in USD
-    // Send to OracleiseAllocation 
+    // Send to OracleiseAllocation
+    let i = 0;
+    let _balance = 0;
+    while ( i < OraclizeContract.tokens.length) {
+        let asset = OraclizeContract.tokens[i];
+        let balance = await Rebalance.getBalance(asset);
+        // Get Balance in USD
+        const cdFeed = new ethers.Contract(OraclizeContract.tokens[i].oraclize, aggregatorV3InterfaceABI, provider); 
+        let latestPrice = await cdFeed.latestRoundData();
+        let subBalance = ethers.utils.formatUnits(latestPrice.answer.toString(), 8).toString()
+        console.log(`Balance : `, balance.toString());
+        console.log(`Balance In USD : `, subBalance.toString());
+        _balance.push(subBalance);
+        _balance += subBalance;
+        i++;
+    }
+    // Retun in total Balance
+    return _balance;
 }
 
-dataFeed()
+dataFeed(100)
         .then( () => process.exit(0))
         .catch(error => {
             console.error(error);
