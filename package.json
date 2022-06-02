@@ -18,11 +18,19 @@
   },
   "homepage": "https://github.com/saingsab/dindex#readme",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0",
     "bignumber.js": "^9.0.2",
     "dotenv": "^16.0.1",
     "ethers": "^5.6.8",
     "install": "^0.13.0",
     "mathjs": "^10.6.1",
     "npm": "^8.12.0"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.6",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.4",
+    "hardhat": "^2.9.7"
   }
 }

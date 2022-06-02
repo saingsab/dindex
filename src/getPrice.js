@@ -1,6 +1,5 @@
 require("dotenv").config();
 const { ethers } = require("ethers") ;
-// const BigNumber = require("bignumber.js");
 const Math = require("mathjs");
 const OraclizeContract = require("../data/tokenList.json");
 const { bignumber } = require("mathjs");
@@ -25,7 +24,7 @@ const dataFeed = async (_totalUSD) => {
         // Ethers Math
         let amount = ethers.utils.formatUnits(allocateInUSD, 6).toString();
         let amount2 = ethers.utils.formatUnits(latestPrice.answer.toString(), 8).toString() ;
-        
+
         // Rebalance HERE
         console.log( Math.divide(allocateInUSD, amount2));
         i++;
