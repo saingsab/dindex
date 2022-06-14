@@ -1,6 +1,7 @@
 {
     "network": "Aurora",
     "description": "",
+    "basedContract" : "",
     "tokens": [
         {
             "name": "Matic",
