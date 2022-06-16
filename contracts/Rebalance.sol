@@ -47,12 +47,9 @@ contract Rebalance is Ownable {
 		return amountOutMins[path.length -1];
 	}
 
-	function getQuotation(address _router1, address _token1, address[] calldata _token2, uint256 _amount) external view returns (uint256) {
-		uint256 i = 0;
-		while (i < _token2.length) {
-
-		}
-
+	// for TestSTG
+	// Remove For Production
+	function getQuotation(address _router1, address _token1, address _token2, uint256 _amount) external view returns (uint256) {
 		uint256 amtBack = getAmountOutMin(_router1, _token1, _token2, _amount);
 		return amtBack;
 	}
