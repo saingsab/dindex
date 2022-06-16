@@ -16,21 +16,21 @@
             "oraclize": "0xF9680D99D6C9589e2a93a78A04A279e509205945"
         },
         {
-            "name": "Kyber",
-            "address": "0x1C954E8fe737F99f68Fa1CCda3e51ebDB291948C",
-            "symbol": "KNC",
-            "oraclize": "0x10e5f3DFc81B3e5Ef4e648C4454D04e79E1E41E2"
-        },
-        {
-            "name": "Curve",
-            "address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
-            "symbol": "CRV",
-            "oraclize": "0x336584C8E6Dc19637A5b36206B1c79923111b405"
+            "name": "Uniswap",
+            "address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+            "symbol": "UNI",
+            "oraclize": "0xdf0Fb4e4F928d2dCB76f438575fDD8682386e13C"
         },
         {
             "name": "Aave",
             "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
             "symbol": "AAVE",
             "oraclize": "0x72484B12719E23115761D5DA1646945632979bB6"
+        },
+        {
+            "name": "QuickSwap",
+            "address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+            "symbol": "QUICK",
+            "oraclize": "0xa058689f4bCa95208bba3F265674AE95dED75B6D"
         }]
 }
