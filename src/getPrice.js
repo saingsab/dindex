@@ -25,7 +25,7 @@ const dataFeed = async (_totalUSD, _balancePerAsset) => {
         // let amount = ethers.utils.formatUnits(allocateInUSD, 6).toString();
         let amount2 = ethers.utils.formatUnits(latestPrice.answer.toString(), 8).toString() ;
         // If Returnbalance > 3%  Current Balance Sell else buy
-        if () {
+        if (true) {
 
         } else {
 
@@ -62,7 +62,7 @@ const getBananceFromContract = async () => {
     return _balance;
 }
 
-dataFeed(100)
+dataFeed(500)
         .then( () => process.exit(0))
         .catch(error => {
             console.error(error);

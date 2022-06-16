@@ -26,11 +26,5 @@
             "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
             "symbol": "AAVE",
             "oraclize": "0x72484B12719E23115761D5DA1646945632979bB6"
-        },
-        {
-            "name": "QuickSwap",
-            "address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
-            "symbol": "QUICK",
-            "oraclize": "0xa058689f4bCa95208bba3F265674AE95dED75B6D"
         }]
 }
