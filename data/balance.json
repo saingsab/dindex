@@ -6,22 +6,26 @@
     {
       "sym": "WMATIC",
       "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
-      "balance": 233.816
+      "balance": 233.816,
+      "oraclize": "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0"
     },
     {
       "sym": "WETH",
       "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-      "balance": 0.0825188
+      "balance": 0.0825188,
+      "oraclize": "0xF9680D99D6C9589e2a93a78A04A279e509205945"
     },
     {
       "sym": "UNI",
       "address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
-      "balance": 23.2795
+      "balance": 23.2795,
+      "oraclize": "0xdf0Fb4e4F928d2dCB76f438575fDD8682386e13C"
     },
     {
       "sym": "AAVE",
       "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
-      "balance": 1.53558
+      "balance": 1.53558,
+      "oraclize": "0x72484B12719E23115761D5DA1646945632979bB6"
     }
   ],
   "updateAt": "2022-06-16T09:10:23.101Z"
