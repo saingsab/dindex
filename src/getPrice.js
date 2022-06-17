@@ -3,27 +3,21 @@ const { ethers } = require("ethers") ;
 const Math = require("mathjs");
 const OraclizeContract = require("../data/tokenList.json");
 const { bignumber } = require("mathjs");
+const fs = require('fs');
+
+const writeLog = (local, text) => {
+    fs.appendFile(local.toString(), text.toString(), function (err) {
+      if (err) return console.log(err);
+    });
+}
 
 // testSTG
 const Balance = require("../data/balance.json");
-const fs = require('fs');
+
 const { ContractFunctionVisibility } = require("hardhat/internal/hardhat-network/stack-traces/model");
 const path = 'data/balance.json';
 
 let = CurrentBalance = 0;
-
-let balance = {
-    dec: "Balancing",
-    routers: "",
-    basedAssets: "",
-    tokens: [
-        { sym: "WMATIC", "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270", balance: 309.69930402638084 },
-        { sym: "WETH", "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", balance: 0.10911871406961425 },
-        { sym: "UNI", "address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f", balance: 30.426505636097588 },
-        { sym: "AAVE", "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B", balance: 2.0278679970391376 }
-    ],
-    updateAt: new Date().toISOString()
-}
 
 // writeFile(path, JSON.stringify(balance, null, 2), (error) => {
 //   if (error) {
@@ -86,8 +80,9 @@ const getBalance = async () => {
 const provider = new ethers.providers.JsonRpcProvider(process.env.URL.toString().trim());
 const aggregatorV3InterfaceABI = [{ "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "description", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint80", "name": "_roundId", "type": "uint80" }], "name": "getRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "version", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
 
-
 const dataFeed = async (_totalUSD) => {
+
+
     /* 
         1. Get Total amount in USD 
         2. Allocatoin price according the percentage 
@@ -95,7 +90,10 @@ const dataFeed = async (_totalUSD) => {
     */
 //    console.log(_totalUSD)
     let i = 0;
+    let newIndex = [];
+    let newPostBlance = [];
     // Loop all price from Oracle price feed from selected assets.
+
     while ( i < OraclizeContract.tokens.length) {
         let totalAsset = OraclizeContract.tokens.length;
         // Caculate the allocation per asset.
@@ -110,21 +108,51 @@ const dataFeed = async (_totalUSD) => {
         let pre_balance = await currentBalance();
         let post_balance = Math.multiply(Math.divide(allocateInUSD, amount2), amount2);
         let percentage_bull = Math.multiply(Math.divide(Math.subtract(post_balance, pre_balance[i]), post_balance), 100);
-       
-        // Every assets in the array that's volatile 3% will be reblance
-        if (true) {
-            console.log("Asset to be rebalancing!", _totalUSD, pre_balance[i],  post_balance,
-                        percentage_bull)
-        } else {
-
-        }
-
-        // Math.multiply((Math.divide((Math.subtract(currentBalance[i], amount2))), currentBalance[i]), 100) >= 3
 
         // Rebalance HERE
         // console.log( Math.divide(allocateInUSD, amount2));
+        newIndex.push(percentage_bull);
+        newPostBlance.push( Math.divide(allocateInUSD, amount2));
         i++;
     }
+    // finding the gainer and losser from index
+    var sorted = newIndex.slice().sort(function(a, b){
+        return a -b;
+    });
+
+    var Gainer = sorted[sorted.length - 1],
+        Losser = sorted[0];
+
+    // var smallest = sorted[0],                      
+    // secondSmallest = sorted[1],                
+    // secondLargest = sorted[sorted.length - 2], 
+    // largest  = sorted[sorted.length - 1];
+    
+
+    if(Gainer >= 1 || Losser <= -3) {
+        console.log("There are assets in the array that's volatile 3%, Start reblancing now ...")
+        
+        // let balance = {
+        //     dec: "Balancing",
+        //     routers: "",
+        //     basedAssets: "",
+        //     tokens: [
+        //         { sym: "WMATIC", "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270", balance: newPostBlance[0] },
+        //         { sym: "WETH", "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", balance: newPostBlance[1] },
+        //         { sym: "UNI", "address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f", balance: newPostBlance[2] },
+        //         { sym: "AAVE", "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B", balance: newPostBlance[3] }
+        //     ],
+        //     updateAt: new Date().toISOString()
+        // }
+        // Write log after rebalance!
+        console.log("Start writing balance...", `WMATIC: ${newPostBlance[0]}`);
+        // writeLog('bellow.log', "hsfsldkhfslkdhf");
+        // writeLog('reIndex.log', `\n WMATIC: ${newPostBlance[0]}, WETH: ${newPostBlance[1]}, UNI: ${newPostBlance[2]}, AAVE: ${newPostBlance[3]}`);
+        // \n WMATIC: ${newPostBlance[0]}
+    } else {
+        console.log("There is no volatile more then +3% or -3%, reblancing service is taking a nap now !..")
+    }
+    console.log(Gainer, Losser);
 }
 
 const getBananceFromContract = async () => {
@@ -158,7 +186,6 @@ const getBananceFromContract = async () => {
 //             console.error(error);
 //             process.exit(1);
 //         });
-
 
 getBalance()
         .then( () => process.exit(0))
