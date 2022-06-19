@@ -11,23 +11,37 @@ const writeLog = (local, text) => {
     });
 }
 
+
 // testSTG
 const Balance = require("../data/balance.json");
-
 const { ContractFunctionVisibility } = require("hardhat/internal/hardhat-network/stack-traces/model");
 const path = 'data/balance.json';
 
 let = CurrentBalance = 0;
 
-// writeFile(path, JSON.stringify(balance, null, 2), (error) => {
-//   if (error) {
-//     console.log('An error has occurred ', error);
-//     return;
-//   }
-//   console.log('Data written successfully to disk');
-// });
+const updateBlance = async (_balance) => {
+    var balanceFile = {
+        dec: "Balancing",
+        routers: "",
+        basedAssets: "",
+        tokens: [
+            { sym: "WMATIC", "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270", balance: _balance[0] },
+            { sym: "WETH", "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", balance: _balance[1] },
+            { sym: "UNI", "address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f", balance: _balance[2] },
+            { sym: "AAVE", "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B", balance: _balance[3] }
+        ],
+        updateAt: new Date().toISOString()
+    }
+    
+    fs.writeFile(path, JSON.stringify(balanceFile, null, 2), (error) => {
+    if (error) {
+        console.log('An error has occurred ', error);
+        return;
+    }
+    console.log('Data written successfully to disk');
+    });
+}
 
-// TestSTG
 const currentBalance = async () => {
     //  [ ] Print total holding now in USD
     let i = 0;
@@ -60,20 +74,20 @@ const getBalance = async () => {
         let priceFeed = await cdFeed.latestRoundData();
         let pricing = ethers.utils.formatUnits(priceFeed.answer.toString(), 8).toString() ;
         let subBalance = Math.multiply(pricing, Balance.tokens[i].balance)
-        // console.log( Math.multiply(pricing, Balance.tokens[i].balance));
+        console.log( Math.multiply(pricing, Balance.tokens[i].balance));
         // _arrayAssets.push(subBalance);
         _balance += subBalance;
         
         i++;
     }
-    // console.log(_balance)
-    // return _balance;
-    await dataFeed(_balance)
-        .then( () => process.exit(0))
-        .catch(error => {
-            console.error(error);
-            process.exit(1);
-        });
+    console.log(_balance)
+    return _balance;
+    // await dataFeed(_balance)
+    //     .then( () => process.exit(0))
+    //     .catch(error => {
+    //         console.error(error);
+    //         process.exit(1);
+    //     });
 
 }
 
@@ -81,8 +95,6 @@ const provider = new ethers.providers.JsonRpcProvider(process.env.URL.toString()
 const aggregatorV3InterfaceABI = [{ "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "description", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint80", "name": "_roundId", "type": "uint80" }], "name": "getRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "version", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
 
 const dataFeed = async (_totalUSD) => {
-
-
     /* 
         1. Get Total amount in USD 
         2. Allocatoin price according the percentage 
@@ -128,31 +140,19 @@ const dataFeed = async (_totalUSD) => {
     // secondLargest = sorted[sorted.length - 2], 
     // largest  = sorted[sorted.length - 1];
     
-
     if(Gainer >= 1 || Losser <= -3) {
         console.log("There are assets in the array that's volatile 3%, Start reblancing now ...")
-        
-        // let balance = {
-        //     dec: "Balancing",
-        //     routers: "",
-        //     basedAssets: "",
-        //     tokens: [
-        //         { sym: "WMATIC", "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270", balance: newPostBlance[0] },
-        //         { sym: "WETH", "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", balance: newPostBlance[1] },
-        //         { sym: "UNI", "address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f", balance: newPostBlance[2] },
-        //         { sym: "AAVE", "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B", balance: newPostBlance[3] }
-        //     ],
-        //     updateAt: new Date().toISOString()
-        // }
+        // updateBlance(newPostBlance);
         // Write log after rebalance!
         console.log("Start writing balance...", `WMATIC: ${newPostBlance[0]}`);
-        // writeLog('bellow.log', "hsfsldkhfslkdhf");
         // writeLog('reIndex.log', `\n WMATIC: ${newPostBlance[0]}, WETH: ${newPostBlance[1]}, UNI: ${newPostBlance[2]}, AAVE: ${newPostBlance[3]}`);
         // \n WMATIC: ${newPostBlance[0]}
     } else {
         console.log("There is no volatile more then +3% or -3%, reblancing service is taking a nap now !..")
     }
     console.log(Gainer, Losser);
+
+    // updateBlance([233.816, 0.0825188, 23.2795, 1.53558]);
 }
 
 const getBananceFromContract = async () => {
