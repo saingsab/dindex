@@ -1,11 +1,19 @@
 const { writeFile, writeFileSync } = require('fs');
+const logging = require("../utils/loggin");
 
 const path = 'data/balance.json';
 const config = { ip: '192.0.2.1', port: 3000 };
 
+const writeLog = (local, text) => {
+  fs.appendFile(local.toString(), text.toString(), function (err) {
+    if (err) return console.log(err);
+  });
+}
+
 const saveBalance = (_data) => {
   const stringifyData = JSON.stringify(_data)
   writeFileSync(path, stringifyData)
+  writeLog('rebalancing.log', `\n ${stringifyData}`);
 }
 
 const updateBlance = async (_balance) => {

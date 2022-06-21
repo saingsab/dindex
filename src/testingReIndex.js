@@ -1,12 +1,15 @@
-const CoinGecko = require('coingecko-api');
 const axios = require("axios");
 const fs = require('fs');
-const { asin, ConstantNodeDependencies } = require('mathjs');
-const CoinGeckoClient = new CoinGecko();
 const Math = require("mathjs");
-// const Balance = require("../data/balance.json");
 const updateBlance = require("../utils/updateBalance");
+const sleep = require("../utils/sleep");
 const Balance = require("../data/balance.json");
+
+const writeLog = async (local, text) => {
+    fs.appendFileSync(local.toString(), text.toString(), function (err) {
+      if (err) return console.log(err);
+    });
+}
 
 const dataFeed = async() => {
     let i = 0;
@@ -59,6 +62,7 @@ const balancer = async () => {
 
 const gainerLosser = async () => {
     let _balancer = await balancer();
+    
     let i = 0;
     let _percentage = [];
     let _newIndexCoin = [];
@@ -76,7 +80,7 @@ const gainerLosser = async () => {
 
     var Gainer = sorted[sorted.length - 1],
         Losser = sorted[0];
-
+    
     return {
         total: _balancer.total,
         array_usd: _balancer.array_usd,
@@ -89,13 +93,18 @@ const gainerLosser = async () => {
 }
 
 const rebalance = async () => {
+    
     let _gainerLosser = await gainerLosser();
     if (_gainerLosser.gainer > 3 || _gainerLosser.losser < -3) {
+        logging.logging(`logs/rebalancing.log`, `\n rebalance`);
         console.log("There are assets in the array that's volatile 3%, Start reblancing now ...")
-        updateBlance.updateBlance(_gainerLosser.newIndexCoin);
+        await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
+        await writeLog('profit.log', `\n ${_gainerLosser}`);
         // console.log(_gainerLosser);
     } else {
-        console.log("There is no volatile more then +3% or -3%, reblancing service is taking a nap now !..")
+        console.log("There is no volatile more then +3% or -3%, reblancing service is taking a nap now !..");
+        await writeLog('profit.log', `\n ${_gainerLosser}`);
+        // console.log(_gainerLosser);
     }
 }
 
@@ -113,6 +122,8 @@ main()
             console.error(error);
             process.exit(1);
         });
+
+// logging.logging(`logs/rebalancing.log`, `\n HI`);
 
 // dataFeed().then( () => process.exit(0))
 //         .catch(error => {
