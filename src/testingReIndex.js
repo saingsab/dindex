@@ -1,8 +1,10 @@
 const CoinGecko = require('coingecko-api');
-const { accessSync } = require('fs');
+const fs = require('fs');
+const { asin } = require('mathjs');
 const CoinGeckoClient = new CoinGecko();
 const Math = require("mathjs");
 const Balance = require("../data/balance.json");
+const updateBlance = require("../script/testSTG");
 
 const path = 'data/balance.json';
 
@@ -88,32 +90,13 @@ const gainerLosser = async () => {
     }
 }
 
-const updateBlance = async (_balance) => {
-    var balanceFile = {
-        dec: "Balancing",
-        routers: "",
-        basedAssets: "",
-        tokens: [
-            { sym: "WMATIC", "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270", balance: _balance[0] },
-            { sym: "WETH", "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", balance: _balance[1] },
-            { sym: "UNI", "address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f", balance: _balance[2] },
-            { sym: "AAVE", "address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B", balance: _balance[3] }
-        ],
-        updateAt: new Date().toISOString()
-    }
-    
-    fs.writeFile(path, JSON.stringify(balanceFile, null, 2), (error) => {
-    if (error) {
-        console.log('An error has occurred ', error);
-        return;
-    }
-    console.log('Data written successfully to disk');
-    });
-}
-
 const main = async () => {
     let _gainerLosser = await gainerLosser();
-    console.log(_gainerLosser);
+    updateBlance.updateBlance(100);
+    console.log(_gainerLosser.newIndexCoin);
+    // return updateBlance.updateBlance(100);
+    // await updateBlance(_gainerLosser);
+    // await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
 }
  
 main()
