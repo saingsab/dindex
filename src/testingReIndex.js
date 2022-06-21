@@ -95,7 +95,7 @@ const gainerLosser = async () => {
 const rebalance = async () => {
     
     let _gainerLosser = await gainerLosser();
-    if (_gainerLosser.gainer > 3 || _gainerLosser.losser < -3) {
+    if (_gainerLosser.gainer > 3 || _gainerLosser.losser < -0.001) {
         console.log("There are assets in the array that's volatile 3%, Start reblancing now ...")
         await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
         await writeLog('logs/rebalancing.log', `\n ${_gainerLosser.newIndexCoin}`);

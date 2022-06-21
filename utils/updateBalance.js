@@ -1,4 +1,4 @@
-const { writeFile, writeFileSync } = require('fs');
+const fs = require('fs');
 const logging = require("../utils/loggin");
 
 const path = 'data/balance.json';
