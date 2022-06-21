@@ -5,30 +5,10 @@ const { asin, ConstantNodeDependencies } = require('mathjs');
 const CoinGeckoClient = new CoinGecko();
 const Math = require("mathjs");
 // const Balance = require("../data/balance.json");
-const updateBlance = require("../utils/testSTG");
+const updateBlance = require("../utils/updateBalance");
 const Balance = require("../data/balance.json");
 
 const dataFeed = async() => {
-    // let data = await CoinGeckoClient.exchanges.fetchTickers('binance', {
-    //     coin_ids: ['matic-network', 'ethereum', 'uniswap', 'aave']
-    // });
-
-    // var _coinList = {};
-    // var _subBlance = [];
-    // var _datacc = data.data.tickers.filter(t => t.target == 'USD');
-    // [
-    //     'MATIC',
-    //     'ETH',
-    //     'UNI',
-    //     'AAVE'
-    // ].forEach((i) => {
-    //     var _temp = _datacc.filter(t => t.base == i);
-    //     var _res = _temp.length == 0 ? [] : _temp[0];
-    //     console.log(_res.last)
-    //     _coinList[i] = _res.last;
-    //     _subBlance.push(_res.last);
-    // })
-    // return _subBlance;
     let i = 0;
     let _subBlance = [];
     while( i < Balance.tokens.length ) {
@@ -108,24 +88,34 @@ const gainerLosser = async () => {
     }
 }
 
-const main = async () => {
+const rebalance = async () => {
     let _gainerLosser = await gainerLosser();
-    updateBlance.updateBlance(_gainerLosser.newIndexCoin);
-    console.log(_gainerLosser.newIndexCoin);
+    if (_gainerLosser.gainer > 3 || _gainerLosser.losser < -3) {
+        console.log("There are assets in the array that's volatile 3%, Start reblancing now ...")
+        updateBlance.updateBlance(_gainerLosser.newIndexCoin);
+        // console.log(_gainerLosser);
+    } else {
+        console.log("There is no volatile more then +3% or -3%, reblancing service is taking a nap now !..")
+    }
+}
+
+const main = async () => {
+//    If true every 1 hour will re-run the function 
+    await rebalance();
     // return updateBlance.updateBlance(100);
     // await updateBlance(_gainerLosser);
     // await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
 }
  
-// main()
-//         .then( () => process.exit(0))
-//         .catch(error => {
-//             console.error(error);
-//             process.exit(1);
-//         });
-
-dataFeed().then( () => process.exit(0))
+main()
+        .then( () => process.exit(0))
         .catch(error => {
             console.error(error);
             process.exit(1);
         });
+
+// dataFeed().then( () => process.exit(0))
+//         .catch(error => {
+//             console.error(error);
+//             process.exit(1);
+//         });
