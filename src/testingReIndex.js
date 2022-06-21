@@ -96,14 +96,13 @@ const rebalance = async () => {
     
     let _gainerLosser = await gainerLosser();
     if (_gainerLosser.gainer > 3 || _gainerLosser.losser < -3) {
-        logging.logging(`logs/rebalancing.log`, `\n rebalance`);
         console.log("There are assets in the array that's volatile 3%, Start reblancing now ...")
         await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
-        await writeLog('profit.log', `\n ${_gainerLosser}`);
+        await writeLog('logs/rebalancing.log', `\n ${_gainerLosser.newIndexCoin}`);
         // console.log(_gainerLosser);
     } else {
         console.log("There is no volatile more then +3% or -3%, reblancing service is taking a nap now !..");
-        await writeLog('profit.log', `\n ${_gainerLosser}`);
+        await writeLog('logs/rebalancing.log', `\n ${ _gainerLosser.newIndexCoin}`);
         // console.log(_gainerLosser);
     }
 }
@@ -111,9 +110,6 @@ const rebalance = async () => {
 const main = async () => {
 //    If true every 1 hour will re-run the function 
     await rebalance();
-    // return updateBlance.updateBlance(100);
-    // await updateBlance(_gainerLosser);
-    // await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
 }
  
 main()
@@ -122,11 +118,3 @@ main()
             console.error(error);
             process.exit(1);
         });
-
-// logging.logging(`logs/rebalancing.log`, `\n HI`);
-
-// dataFeed().then( () => process.exit(0))
-//         .catch(error => {
-//             console.error(error);
-//             process.exit(1);
-//         });
