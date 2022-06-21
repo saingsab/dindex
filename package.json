@@ -19,6 +19,7 @@
   "homepage": "https://github.com/saingsab/dindex#readme",
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
+    "axios": "^0.27.2",
     "bignumber.js": "^9.0.2",
     "coingecko-api": "^1.0.10",
     "dotenv": "^16.0.1",

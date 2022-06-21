@@ -1,32 +1,50 @@
 const CoinGecko = require('coingecko-api');
+const axios = require("axios");
 const fs = require('fs');
-const { asin } = require('mathjs');
+const { asin, ConstantNodeDependencies } = require('mathjs');
 const CoinGeckoClient = new CoinGecko();
 const Math = require("mathjs");
+// const Balance = require("../data/balance.json");
+const updateBlance = require("../utils/testSTG");
 const Balance = require("../data/balance.json");
-const updateBlance = require("../script/testSTG");
-
-const path = 'data/balance.json';
 
 const dataFeed = async() => {
-    let data = await CoinGeckoClient.exchanges.fetchTickers('bitfinex', {
-        coin_ids: ['matic-network', 'ethereum', 'uniswap', 'aave']
-    });
-    var _coinList = {};
-    var _subBlance = [];
-    var _datacc = data.data.tickers.filter(t => t.target == 'USD');
-    [
-        'MATIC',
-        'ETH',
-        'UNI',
-        'AAVE'
-    ].forEach((i) => {
-        var _temp = _datacc.filter(t => t.base == i);
-        var _res = _temp.length == 0 ? [] : _temp[0];
-        // console.log(_res.last)
-        _coinList[i] = _res.last;
-        _subBlance.push(_res.last);
-    })
+    // let data = await CoinGeckoClient.exchanges.fetchTickers('binance', {
+    //     coin_ids: ['matic-network', 'ethereum', 'uniswap', 'aave']
+    // });
+
+    // var _coinList = {};
+    // var _subBlance = [];
+    // var _datacc = data.data.tickers.filter(t => t.target == 'USD');
+    // [
+    //     'MATIC',
+    //     'ETH',
+    //     'UNI',
+    //     'AAVE'
+    // ].forEach((i) => {
+    //     var _temp = _datacc.filter(t => t.base == i);
+    //     var _res = _temp.length == 0 ? [] : _temp[0];
+    //     console.log(_res.last)
+    //     _coinList[i] = _res.last;
+    //     _subBlance.push(_res.last);
+    // })
+    // return _subBlance;
+    let i = 0;
+    let _subBlance = [];
+    while( i < Balance.tokens.length ) {
+        var options = {
+            method: 'GET',
+            url: 'https://api.coingecko.com/api/v3/simple/price',
+            params: {ids: Balance.tokens[i].ids , vs_currencies: 'usd'}
+          };
+          await axios.request(options).then(function (response) {
+            _subBlance.push(response.data[Balance.tokens[i].ids].usd)
+          }).catch(function (error) {
+            console.error(error);
+          });
+       
+        i++
+    }
     return _subBlance;
 }
 
@@ -92,15 +110,21 @@ const gainerLosser = async () => {
 
 const main = async () => {
     let _gainerLosser = await gainerLosser();
-    updateBlance.updateBlance(100);
+    updateBlance.updateBlance(_gainerLosser.newIndexCoin);
     console.log(_gainerLosser.newIndexCoin);
     // return updateBlance.updateBlance(100);
     // await updateBlance(_gainerLosser);
     // await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
 }
  
-main()
-        .then( () => process.exit(0))
+// main()
+//         .then( () => process.exit(0))
+//         .catch(error => {
+//             console.error(error);
+//             process.exit(1);
+//         });
+
+dataFeed().then( () => process.exit(0))
         .catch(error => {
             console.error(error);
             process.exit(1);
