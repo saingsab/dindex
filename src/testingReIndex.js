@@ -2,8 +2,14 @@ const axios = require("axios");
 const fs = require('fs');
 const Math = require("mathjs");
 const updateBlance = require("../utils/updateBalance");
-const sleep = require("../utils/sleep");
+// const sleep = require("../utils/sleep");
 const Balance = require("../data/balance.json");
+
+const sleep = async (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
 
 const writeLog = async (local, text) => {
     fs.appendFileSync(local.toString(), text.toString(), function (err) {
@@ -93,16 +99,19 @@ const gainerLosser = async () => {
 }
 
 const rebalance = async () => {
-    
+    // Wait 1 Hours
+    await sleep(3600000);
     let _gainerLosser = await gainerLosser();
-    if (_gainerLosser.gainer > 3 || _gainerLosser.losser < -0.001) {
+    if (_gainerLosser.gainer > 3 || _gainerLosser.losser < -3) {
         console.log("There are assets in the array that's volatile 3%, Start reblancing now ...")
         await updateBlance.updateBlance(_gainerLosser.newIndexCoin);
-        await writeLog('logs/rebalancing.log', `\n ${_gainerLosser.newIndexCoin}`);
+        await writeLog('logs/rebalancing.log', `\n ${_gainerLosser.newIndexCoin} " Total: "${_gainerLosser.total}`);
         // console.log(_gainerLosser);
+        await rebalance();
     } else {
         console.log("There is no volatile more then +3% or -3%, reblancing service is taking a nap now !..");
-        await writeLog('logs/rebalancing.log', `\n ${ _gainerLosser.newIndexCoin}`);
+        await writeLog('logs/rebalancing.log', `\n ${_gainerLosser.newIndexCoin} " Total: "${_gainerLosser.total}`);
+        await rebalance();
         // console.log(_gainerLosser);
     }
 }
