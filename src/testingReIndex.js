@@ -41,6 +41,8 @@ const balancer = async () => {
     // [ ] Total Asset in USD
     // [ ] Arry Current Blance from contract
     // [ ] volatile in % from smallest to biggist
+    // After back from PP trip let's add more fund into the index.
+    // 5000 USD Init Fund of Index.
 
     let i = 0;
     let _balance = 0;
